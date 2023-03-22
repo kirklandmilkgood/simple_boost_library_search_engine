@@ -9,4 +9,4 @@ boost在c++的函式庫中具有僅次於STL函式庫的重要地位，其當中
 <img width="710" alt="截圖 2023-03-22 下午12 43 07" src="https://user-images.githubusercontent.com/128550044/226804676-0b8690a7-d7b8-4013-bf34-eb8788c2d815.png">
 
 本專案依照功能主要可分為5個部分： 爬蟲、字串處理、索引建立、根據關鍵字進行搜尋以及網路與伺服器
-主要的對應檔案為： 
+主要的對應檔案為： crawler.py  parser.cpp  searcher.cpp  
