@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>boost searcher engine</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="icon" href="./fno.jpg" type="image/x-icon"/>
+</head>
+
+<body>
+    <div class="all" id="oper">
+        <!-- 搜尋欄 begin-->
+        <div class="column">
+            <input type="search" />
+
+            <button v-on:click="search()">搜尋</button>
+        </div>
+        <!-- 搜尋欄 end -->
+
+        <!-- 搜尋結果顯示 begin -->
+        <div class="content">
+            <div class="info">
+                <h2>
+                    歡迎使用 極簡 boost 線上文件 搜尋引擎
+                </h2>
+                
+                <h2>
+                    在搜尋欄中輸入關鍵字後點擊搜尋，即可
+                </h2>
+            </div>
+        </div>
+        <!-- 搜尋結果顯示 end -->
+
+        <div class="page">
+            <button class="prev" v-on:click="prepage()">上一頁</button>
+            <button class="next" v-on:click="nextpage()">下一頁</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+    <script>
+        var oper = new Vue({
+            el: '#oper',
+            data: {
+                len: 10,
+                idx: 0, // 當前頁數
+                cnt: 0, // 總頁數
+                infos: []
+            },
+            methods: {
+                build: function() {
+                    var result = $(".content");
+                    result.empty();
+
+                    
+                    for (var i = this.idx * this.len, j = 0; i < this.infos.length && j < this.len; i++, j++) {
+                        var title = $("<a>", {
+                            text: this.infos[i].title,
+                            href: this.infos[i].url,
+                            target: "_blank"
+                        });
+
+                        var desc = $("<p>", {
+                            text: this.infos[i].desc
+                        });
+
+                        var url = $("<i>", {
+                            text: this.infos[i].url
+                        });
+
+                        var item = $("<div>", {
+                            class: "info"
+                        });
+
+                        title.appendTo(item);
+                        desc.appendTo(item);
+                        url.appendTo(item);
+
+                        item.appendTo(result);
+                    }
+                },
+                slove: function() {
+                    var result = $(".content");
+                    result.empty();
+
+                    this.idx = 0;
+                    this.cnt = 0;
+
+                    if (this.infos === null) {
+                        this.infos = [];
+                        alert("not find");
+
+                        var notFound = $("<h2>", {
+                            text: "404 Not Found"
+                        });
+
+                        notFound.appendTo(result);
+                        return;
+                    }
+                    
+                    this.cnt = Math.floor(this.infos.length / this.len) ;
+                    this.build();
+                },
+                search: function() {
+                    var query = $(".column input").val();
+                    if (query.length === 0) {
+                        alert("請輸入關鍵字進行搜尋");
+                        return;
+                    }
+
+                    alert(query);
+                    $.ajax({
+                        type: "get",
+                        url: "searcher?query=" + query,
+                        context: this,
+                        success: function(data, status) {
+                            this.infos = data;
+                            this.slove();
+                        }
+                    });
+                },
+                prepage: function() {
+                    if (this.idx <= 0) {
+                        this.idx = 0;
+                        alert("已經到首頁了");
+                        return;
+                    }
+                    this.idx = this.idx - 1;
+                    this.build();
+                },
+                nextpage: function() {
+                    if (this.idx >= this.cnt) {
+                        alert("已經到最後一頁了");
+                        return;
+                    }
+                    this.idx = this.idx + 1;
+                    this.build();
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
